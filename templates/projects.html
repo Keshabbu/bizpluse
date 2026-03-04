@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects - BizPulse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background: #f4f6f9;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: #007BFF;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 22px;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.collapsed h2 {
+            opacity: 0;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            margin: 5px 0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .sidebar a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar a:hover {
+            background: #0056b3;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        /* Main content */
+        .main {
+            flex: 1;
+            padding: 30px;
+            transition: margin-left 0.3s;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            color: green;
+            margin-bottom: 15px;
+        }
+
+        .project-form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .project-form input[type="text"],
+        .project-form input[type="file"] {
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .project-form button {
+            padding: 10px 20px;
+            background: #007BFF;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .project-form button:hover {
+            background: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background: #007BFF;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f4f6f9;
+        }
+
+        a.delete-btn {
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        a.delete-btn:hover {
+            background: #a71d2a;
+        }
+
+        @media(max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+            }
+            .sidebar a {
+                flex: 0 0 auto;
+                margin: 0 5px;
+            }
+            .main {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <button class="toggle-btn" onclick="toggleSidebar()">
+            <i class="fa fa-bars"></i>
+        </button>
+        <h2>BizPulse</h2>
+        <a href="{{ url_for('dashboard') }}"><i class="fa fa-home"></i><span class="label">Dashboard</span></a>
+        <a href="{{ url_for('profile') }}"><i class="fa fa-user"></i><span class="label">Profile</span></a>
+        <a href="{{ url_for('projects') }}"><i class="fa fa-folder"></i><span class="label">Projects</span></a>
+        <a href="{{ url_for('reports') }}"><i class="fa fa-chart-bar"></i><span class="label">Reports</span></a>
+        <a href="{{ url_for('logout') }}"><i class="fa fa-sign-out-alt"></i><span class="label">Logout</span></a>
+    </div>
+
+    <div class="main">
+        <h1>Your Projects</h1>
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+
+        <div class="project-form">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="text" name="name" placeholder="Project Name" required>
+                <input type="file" name="dataset" accept=".csv">
+                <button type="submit">Add Project</button>
+            </form>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Project Name</th>
+                    <th>Dataset</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in projects %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ p.name }}</td>
+                    <td>{% if p.dataset_path %}Uploaded{% else %}No File{% endif %}</td>
+                    <td>{{ p.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <a class="delete-btn" href="{{ url_for('delete_project', pid=p.id) }}">Delete</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align:center;">No projects found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+    </script>
+</body>
+</html>

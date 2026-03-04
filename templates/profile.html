@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile - BizPulse</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #eef2f7; padding: 50px; }
+        .container { max-width: 400px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #007BFF; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+        button { width: 100%; padding: 10px; background: #007BFF; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .message { text-align: center; color: green; margin-bottom: 10px; }
+        a { display: block; text-align: center; margin-top: 15px; color: #007BFF; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Profile</h2>
+        {% if message %}
+        <div class="message">{{ message }}</div>
+        {% endif %}
+        <form method="POST">
+            <input type="text" name="username" value="{{ user.username }}" placeholder="Username" required>
+            <input type="email" name="email" value="{{ user.email }}" placeholder="Email" required>
+            <input type="password" name="password" placeholder="New Password (leave blank to keep)">
+            <button type="submit">Update Profile</button>
+        </form>
+        <a href="/dashboard">Back to Dashboard</a>
+    </div>
+</body>
+</html>

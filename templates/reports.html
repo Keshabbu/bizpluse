@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reports</title>
+    <style>
+        body { font-family: Arial,sans-serif; background:#eef2f7; padding:20px; }
+        img { margin:20px 0; border:1px solid #ccc; border-radius:5px; display:block; margin-left:auto; margin-right:auto; }
+        h3 { text-align:center; color:#007BFF; }
+        a { display:block; margin-top:20px; text-align:center; }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center">Your Reports</h2>
+    {% if projects %}
+        {% for p in projects %}
+            <h3>{{ p.name }}</h3>
+            {% if not p.dataset_path %}
+                <p>No dataset uploaded</p>
+            {% else %}
+                {% set prefix = upload_folder + '/' %}
+                {% for file in ['hist','corr','cat'] %}
+                    {% for f in range(1) %}
+                        {% set path = prefix + file + '_' + p.id|string + '_dummy.png' %}
+                        {# Replace with real images saved by your backend #}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p style="text-align:center">No projects to report.</p>
+    {% endif %}
+    <a href="/dashboard">Back</a>
+</body>
+</html>
